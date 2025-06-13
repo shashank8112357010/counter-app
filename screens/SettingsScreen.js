@@ -12,7 +12,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
+// Using a simple implementation instead of external slider
+// import Slider from '@react-native-community/slider';
 import { StorageService } from "../services/StorageService";
 import { UserService } from "../services/UserService";
 import { LANGUAGES, getTranslation } from "../constants/Languages";
@@ -219,36 +220,64 @@ export default function SettingsScreen({ navigation }) {
             </View>
           </View>
 
-          <View style={styles.sliderContainer}>
-            <Text style={styles.sliderLabel}>
-              Min Age: {settings.ageRange.min}
-            </Text>
-            <Slider
-              style={styles.slider}
-              minimumValue={18}
-              maximumValue={60}
-              value={settings.ageRange.min}
-              onValueChange={(value) => handleAgeRangeChange("min", value)}
-              minimumTrackTintColor="#FF4458"
-              maximumTrackTintColor="#E0E0E0"
-              thumbStyle={{ backgroundColor: "#FF4458" }}
-            />
-          </View>
+          <View style={styles.ageControls}>
+            <View style={styles.ageControl}>
+              <Text style={styles.ageLabel}>Min Age</Text>
+              <View style={styles.ageButtons}>
+                <TouchableOpacity
+                  style={styles.ageButton}
+                  onPress={() =>
+                    handleAgeRangeChange(
+                      "min",
+                      Math.max(18, settings.ageRange.min - 1),
+                    )
+                  }
+                >
+                  <Text style={styles.ageButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.ageValue}>{settings.ageRange.min}</Text>
+                <TouchableOpacity
+                  style={styles.ageButton}
+                  onPress={() =>
+                    handleAgeRangeChange(
+                      "min",
+                      Math.min(59, settings.ageRange.min + 1),
+                    )
+                  }
+                >
+                  <Text style={styles.ageButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
 
-          <View style={styles.sliderContainer}>
-            <Text style={styles.sliderLabel}>
-              Max Age: {settings.ageRange.max}
-            </Text>
-            <Slider
-              style={styles.slider}
-              minimumValue={18}
-              maximumValue={60}
-              value={settings.ageRange.max}
-              onValueChange={(value) => handleAgeRangeChange("max", value)}
-              minimumTrackTintColor="#FF4458"
-              maximumTrackTintColor="#E0E0E0"
-              thumbStyle={{ backgroundColor: "#FF4458" }}
-            />
+            <View style={styles.ageControl}>
+              <Text style={styles.ageLabel}>Max Age</Text>
+              <View style={styles.ageButtons}>
+                <TouchableOpacity
+                  style={styles.ageButton}
+                  onPress={() =>
+                    handleAgeRangeChange(
+                      "max",
+                      Math.max(19, settings.ageRange.max - 1),
+                    )
+                  }
+                >
+                  <Text style={styles.ageButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.ageValue}>{settings.ageRange.max}</Text>
+                <TouchableOpacity
+                  style={styles.ageButton}
+                  onPress={() =>
+                    handleAgeRangeChange(
+                      "max",
+                      Math.min(60, settings.ageRange.max + 1),
+                    )
+                  }
+                >
+                  <Text style={styles.ageButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
 
           <View style={styles.settingItem}>
@@ -263,20 +292,29 @@ export default function SettingsScreen({ navigation }) {
             </View>
           </View>
 
-          <View style={styles.sliderContainer}>
-            <Text style={styles.sliderLabel}>
+          <View style={styles.distanceControl}>
+            <Text style={styles.ageLabel}>
               Distance: {settings.distance} km
             </Text>
-            <Slider
-              style={styles.slider}
-              minimumValue={1}
-              maximumValue={100}
-              value={settings.distance}
-              onValueChange={handleDistanceChange}
-              minimumTrackTintColor="#FF4458"
-              maximumTrackTintColor="#E0E0E0"
-              thumbStyle={{ backgroundColor: "#FF4458" }}
-            />
+            <View style={styles.ageButtons}>
+              <TouchableOpacity
+                style={styles.ageButton}
+                onPress={() =>
+                  handleDistanceChange(Math.max(1, settings.distance - 5))
+                }
+              >
+                <Text style={styles.ageButtonText}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.ageValue}>{settings.distance}</Text>
+              <TouchableOpacity
+                style={styles.ageButton}
+                onPress={() =>
+                  handleDistanceChange(Math.min(100, settings.distance + 5))
+                }
+              >
+                <Text style={styles.ageButtonText}>+</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -407,18 +445,52 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 2,
   },
-  sliderContainer: {
+  ageControls: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 15,
   },
-  sliderLabel: {
-    fontSize: 14,
-    color: "#666666",
-    marginBottom: 10,
+  ageControl: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
   },
-  slider: {
-    width: "100%",
-    height: 40,
+  distanceControl: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  ageLabel: {
+    fontSize: 16,
+    color: "#333333",
+    fontWeight: "500",
+  },
+  ageButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  ageButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#FF4458",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ageButtonText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  ageValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333333",
+    marginHorizontal: 20,
+    minWidth: 30,
+    textAlign: "center",
   },
   appInfo: {
     fontSize: 14,

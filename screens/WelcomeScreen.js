@@ -7,7 +7,8 @@ import {
   ImageBackground,
   StatusBar,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+// Note: LinearGradient is not available in basic expo setup
+// Using a simple overlay instead
 import { Ionicons } from "@expo/vector-icons";
 import { UserService } from "../services/UserService";
 
@@ -25,14 +26,7 @@ export default function WelcomeScreen({ navigation }) {
       style={styles.background}
     >
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={[
-          "rgba(255,68,88,0.8)",
-          "rgba(255,68,88,0.6)",
-          "rgba(0,0,0,0.4)",
-        ]}
-        style={styles.overlay}
-      >
+      <View style={styles.overlay}>
         <View style={styles.container}>
           <View style={styles.header}>
             <Ionicons name="heart" size={60} color="#FFFFFF" />
@@ -63,7 +57,7 @@ export default function WelcomeScreen({ navigation }) {
             </Text>
           </View>
         </View>
-      </LinearGradient>
+      </View>
     </ImageBackground>
   );
 }
@@ -76,6 +70,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
+    backgroundColor: "rgba(255,68,88,0.7)",
   },
   container: {
     flex: 1,
